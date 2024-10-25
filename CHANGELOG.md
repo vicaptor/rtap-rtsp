@@ -1,4 +1,4 @@
-## [0.4.3] - Error: date.txt not found. Please run the script that generates it first.
+## [0.4.3] - 2024-10-25
 
 ### Added
 - 

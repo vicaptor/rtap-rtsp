@@ -26,13 +26,30 @@ services:
     environment:
       - NODE_ENV=development
       - MONGODB_URI=mongodb://mongodb:27017/rtap
-      - REDIS_URI=redis://redis:6379
+      - MONGODB_USER=admin
+      - MONGODB_PASSWORD=admin_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=redis_password
+      - JWT_SECRET=your-secret-key
+      - JWT_EXPIRATION=24h
+      - CORS_ORIGIN=http://localhost:8080
+      - LOG_LEVEL=info
+      - WS_HEARTBEAT_INTERVAL=30000
+    volumes:
+      - ./services/annotation-service/src:/app/src
+      - annotation_logs:/app/logs
     depends_on:
       - mongodb
       - redis
     networks:
       - rtap-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
 
   api-gateway:
     build:
@@ -50,31 +67,46 @@ services:
     networks:
       - rtap-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
 
   mongodb:
     image: mongo:latest
     ports:
       - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=admin_password
       - MONGO_INITDB_DATABASE=rtap
+    volumes:
+      - mongodb_data:/data/db
     networks:
       - rtap-network
     restart: unless-stopped
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 30s
+      timeout: 3s
+      retries: 3
 
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
+    command: redis-server --requirepass redis_password
     volumes:
       - redis_data:/data
-    command: redis-server --requirepass redis_password
     networks:
       - rtap-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
 
   prometheus:
     image: prom/prometheus:latest
@@ -90,6 +122,11 @@ services:
     networks:
       - rtap-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
 
   grafana:
     image: grafana/grafana:latest
@@ -106,6 +143,11 @@ services:
     networks:
       - rtap-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
 
 networks:
   rtap-network:
@@ -117,3 +159,4 @@ volumes:
   redis_data:
   prometheus_data:
   grafana_data:
+  annotation_logs:

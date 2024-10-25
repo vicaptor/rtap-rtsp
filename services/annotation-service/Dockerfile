@@ -4,13 +4,17 @@ WORKDIR /app
 
 # Install dependencies
 COPY package*.json ./
+COPY tsconfig.json ./
 RUN npm install
 
 # Copy source code
-COPY . .
+COPY src/ ./src/
 
 # Build TypeScript code
 RUN npm run build
+
+# Remove development dependencies
+RUN npm prune --production
 
 EXPOSE 3000
 
