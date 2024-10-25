@@ -1,4 +1,4 @@
-## [0.3.2] - 2024-10-25
+## [0.4.0] - 2024-10-25
 
 ### Added
 - 
@@ -24,7 +24,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.2] - 2024-10-25
+## [0.4.0] - 2024-10-25
+
+### Added
+- Complete Annotation Service implementation
+- WebSocket server for real-time annotations
+- REST API for annotation CRUD operations
+- MongoDB integration with data models
+- Redis pub/sub for real-time updates
+- JWT authentication and authorization
+- User management system
+- Real-time annotation broadcasting
+- Logging system with Winston
+
+### Changed
+- Enhanced WebSocket handling with authentication
+- Improved real-time updates with Redis
+- Better error handling and validation
+
+### Security
+- Added JWT authentication
+- Implemented role-based access control
+- Secure password hashing
+- WebSocket connection authentication
+
+## [0.3.2] - 2024-01-09
 
 ### Added
 - Unit tests for RTSP server

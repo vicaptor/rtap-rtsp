@@ -6,6 +6,7 @@
 - Docker Engine
 - Docker Compose V2 (docker compose) or V1 (docker-compose)
 - Node.js 18+ (for local development)
+- Go 1.21+ (for RTSP server development)
 - Git
 
 ### Installation Instructions
@@ -29,10 +30,20 @@
    sudo apt-get install docker-compose-plugin
    ```
 
-3. Verify installations:
+#### Go Installation
+1. Install Go 1.21:
    ```bash
-   docker --version
-   docker compose version
+   # Download and install
+   wget https://go.dev/dl/go1.21.3.linux-amd64.tar.gz
+   sudo rm -rf /usr/local/go
+   sudo tar -C /usr/local -xzf go1.21.3.linux-amd64.tar.gz
+
+   # Add to PATH in ~/.profile or ~/.bashrc
+   export PATH=$PATH:/usr/local/go/bin
+
+   # Verify installation
+   source ~/.profile  # or source ~/.bashrc
+   go version
    ```
 
 #### Node.js
@@ -66,17 +77,43 @@
    - Set up alerting rules
    - Configure dashboards
 
+## Testing Requirements
+
+### RTSP Server Testing
+1. Unit Tests:
+   - MediaMTX client package tests
+   - API endpoint tests
+   - WebSocket handling tests
+
+2. Integration Tests:
+   - Stream management tests
+   - Real-time monitoring tests
+   - MediaMTX integration tests
+
+3. Performance Tests:
+   - Stream handling capacity
+   - WebSocket broadcast performance
+   - API response times
+
+### Required Test Environment
+- Go 1.21+ installed
+- MediaMTX server running
+- Network access for RTSP streams
+
 ## Required Actions
 
 1. Create missing configuration files:
-   - services/annotation-service/package.json
-   - services/annotation-service/tsconfig.json
-   - services/api-gateway/nginx.conf
+   - services/annotation-service/package.json ✓
+   - services/annotation-service/tsconfig.json ✓
+   - services/api-gateway/nginx.conf ✓
    - monitoring/grafana/dashboards/
-   - monitoring/prometheus/prometheus.yml
+   - monitoring/prometheus/prometheus.yml ✓
 
 2. Test each service individually:
    - RTSP server
+     - Unit tests implemented ✓
+     - Integration tests implemented ✓
+     - Need Go installation for testing
    - Annotation service
    - API gateway
    - MongoDB
