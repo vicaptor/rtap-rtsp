@@ -17,6 +17,21 @@ get_current_date() {
     cat date.txt
 }
 
+# Function to get current version from CHANGELOG.md
+get_current_version() {
+    grep -m 1 "## \[" CHANGELOG.md | grep -o "\[.*\]" | tr -d '[]'
+}
+
+# Function to get current changes from CHANGELOG.md
+get_current_changes() {
+    # Extract all content between the first version header and the next version header or EOF
+    awk '/^## \[/{p++;next} p==1{print}' CHANGELOG.md | \
+    sed '/^## \[/,$d' | \
+    awk 'NF' | \
+    sed 's/^### /\n### /' | \
+    awk 'NF' # Remove empty lines
+}
+
 # Function to extract latest changes from CHANGELOG.md
 get_latest_changes() {
     # Extract content between the first two ## headers, skip the version line
@@ -26,13 +41,48 @@ get_latest_changes() {
     awk 'NF' # Remove empty lines
 }
 
+# Function to update the last version's date
+update_last_version_date() {
+    local current_date=$(get_current_date)
+    # Get the last version number and update its date
+    local last_version=$(get_current_version)
+    if [ ! -z "$last_version" ]; then
+        sed -i "0,/## \[$last_version\] - [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}/s/## \[$last_version\] - [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}/## [$last_version] - $current_date/" CHANGELOG.md
+    fi
+}
+
 # Function to update version in package files
 update_version() {
     local new_version=$1
     local date=$(get_current_date)
     
-    # Update CHANGELOG.md
-    sed -i "0,/\[.*\]/s/\[.*\]/[$new_version] - $date/" CHANGELOG.md
+    # First update the last version's date
+    update_last_version_date
+    
+    # Then add the new version entry
+    local temp_file=$(mktemp)
+    echo "## [$new_version] - $date" > "$temp_file"
+    echo "" >> "$temp_file"
+    echo "### Added" >> "$temp_file"
+    echo "- " >> "$temp_file"
+    echo "" >> "$temp_file"
+    echo "### Changed" >> "$temp_file"
+    echo "- " >> "$temp_file"
+    echo "" >> "$temp_file"
+    echo "### Deprecated" >> "$temp_file"
+    echo "- " >> "$temp_file"
+    echo "" >> "$temp_file"
+    echo "### Removed" >> "$temp_file"
+    echo "- " >> "$temp_file"
+    echo "" >> "$temp_file"
+    echo "### Fixed" >> "$temp_file"
+    echo "- " >> "$temp_file"
+    echo "" >> "$temp_file"
+    echo "### Security" >> "$temp_file"
+    echo "- " >> "$temp_file"
+    echo "" >> "$temp_file"
+    cat CHANGELOG.md >> "$temp_file"
+    mv "$temp_file" CHANGELOG.md
 
     # If package.json exists in annotation service, update it
     if [ -f "services/annotation-service/package.json" ]; then
@@ -66,38 +116,50 @@ $base_message"
     # Commit changes with the full message
     git commit -m "$commit_message"
 
-    # Create and push tag with the same message
+    # Create tag with the same message
     git tag -a "v$new_version" -m "$commit_message"
     
-    echo "Changes committed and tagged as v$new_version"
-    echo "Run 'git push && git push --tags' to push changes to remote repository"
+    echo "Pushing changes and tags to remote repository..."
+    
+    # Push both the changes and the tags
+    git push && git push --tags
+    
+    if [ $? -eq 0 ]; then
+        echo "Successfully pushed changes and tags to remote repository"
+    else
+        echo "Error: Failed to push changes to remote repository"
+        exit 1
+    fi
 }
 
 # Main script
-if [ "$#" -lt 2 ]; then
-    echo "Usage: $0 <version> <message>"
-    echo "Example: $0 1.0.0 'Initial release'"
-    exit 1
-fi
-
-NEW_VERSION=$1
-MESSAGE=$2
-
-# Validate version format
-validate_version "$NEW_VERSION"
-
 # Ensure we're in the project root
 if [ ! -f "CHANGELOG.md" ]; then
     echo "Error: Must be run from project root directory"
     exit 1
 fi
 
+# Get default values from CHANGELOG.md
+DEFAULT_VERSION=$(get_current_version)
+DEFAULT_MESSAGE=$(get_current_changes)
+
+# Use command line arguments if provided, otherwise use defaults
+VERSION="${1:-$DEFAULT_VERSION}"
+MESSAGE="${2:-$DEFAULT_MESSAGE}"
+
+# Show what we're using
+echo "Using version: $VERSION"
+echo "Using changes:"
+echo "$MESSAGE"
+echo
+
+# Validate version format
+validate_version "$VERSION"
+
 # Update version in files
-update_version "$NEW_VERSION"
+update_version "$VERSION"
 
-# Create git tag and commit changes
-tag_and_push "$NEW_VERSION" "$MESSAGE"
+# Create git tag and commit changes, then push to remote
+tag_and_push "$VERSION" "$MESSAGE"
 
-echo "Version update complete!"
-echo "Don't forget to push your changes:"
-echo "git push && git push --tags"
+echo "Version update complete and pushed to remote repository!"

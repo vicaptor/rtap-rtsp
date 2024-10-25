@@ -6,12 +6,16 @@ services:
       context: ./services/rtsp-server
       dockerfile: Dockerfile
     ports:
-      - "8554:8554"
-      - "8888:8888"
+      - "8554:8554"  # RTSP
+      - "1935:1935"  # RTMP
+      - "8888:8888"  # HLS
+      - "9997:9997"  # API
     volumes:
       - rtsp_data:/data
+      - ./services/rtsp-server/mediamtx.yml:/etc/mediamtx/mediamtx.yml
     networks:
       - rtap-network
+    restart: unless-stopped
 
   annotation-service:
     build:
@@ -19,38 +23,58 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongodb:27017/rtap
+      - REDIS_URI=redis://redis:6379
     depends_on:
       - mongodb
       - redis
     networks:
       - rtap-network
+    restart: unless-stopped
 
   api-gateway:
     build:
       context: ./services/api-gateway
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
-      - "8443:443"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./services/api-gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./services/api-gateway/ssl:/etc/nginx/ssl
     depends_on:
       - rtsp-server
       - annotation-service
     networks:
       - rtap-network
+    restart: unless-stopped
 
   mongodb:
     image: mongo:latest
+    ports:
+      - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin_password
+      - MONGO_INITDB_DATABASE=rtap
     networks:
       - rtap-network
+    restart: unless-stopped
 
   redis:
     image: redis:alpine
+    ports:
+      - "6379:6379"
     volumes:
       - redis_data:/data
+    command: redis-server --requirepass redis_password
     networks:
       - rtap-network
+    restart: unless-stopped
 
   prometheus:
     image: prom/prometheus:latest
@@ -59,8 +83,13 @@ services:
       - prometheus_data:/prometheus
     ports:
       - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=15d'
     networks:
       - rtap-network
+    restart: unless-stopped
 
   grafana:
     image: grafana/grafana:latest
@@ -69,10 +98,14 @@ services:
       - grafana_data:/var/lib/grafana
     ports:
       - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on:
       - prometheus
     networks:
       - rtap-network
+    restart: unless-stopped
 
 networks:
   rtap-network:

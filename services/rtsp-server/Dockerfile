@@ -1,23 +1,22 @@
-FROM golang:1.21-alpine
+FROM alpine:3.18
 
-WORKDIR /app
+# Install MediaMTX dependencies
+RUN apk add --no-cache \
+    ffmpeg \
+    openssl
 
-# Install required dependencies
-RUN apk add --no-cache gcc musl-dev
+# Download and install MediaMTX
+RUN wget https://github.com/bluenviron/mediamtx/releases/latest/download/mediamtx_linux_amd64.tar.gz && \
+    tar -xvf mediamtx_linux_amd64.tar.gz && \
+    mv mediamtx /usr/local/bin/ && \
+    rm mediamtx_linux_amd64.tar.gz
 
-# Copy go mod and sum files
-COPY go.mod go.sum ./
+# Create config directory
+RUN mkdir -p /etc/mediamtx
 
-# Download dependencies
-RUN go mod download
+# Copy configuration
+COPY mediamtx.yml /etc/mediamtx/
 
-# Copy source code
-COPY . .
+EXPOSE 8554 1935 8888
 
-# Build the application
-RUN go build -o main .
-
-# Expose RTSP and HLS ports
-EXPOSE 8554 8888
-
-CMD ["./main"]
+CMD ["/usr/local/bin/mediamtx", "/etc/mediamtx/mediamtx.yml"]

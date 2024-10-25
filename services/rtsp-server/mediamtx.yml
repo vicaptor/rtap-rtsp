@@ -1,0 +1,29 @@
+paths:
+  all:
+    readUser: admin
+    readPass: admin
+    publishUser: admin
+    publishPass: admin
+
+rtsp:
+  protocols: [tcp, udp]
+  port: 8554
+
+rtmp:
+  port: 1935
+
+hls:
+  port: 8888
+  directory: /tmp/hls
+  segmentDuration: 1
+  segmentMaxSize: 50MB
+  partDuration: 200ms
+  segmentCount: 7
+
+webrtc:
+  enabled: true
+  iceServers: [stun:stun.l.google.com:19302]
+
+api:
+  enable: true
+  port: 9997
