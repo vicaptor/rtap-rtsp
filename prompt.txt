@@ -1,0 +1,6 @@
+Use TODO.md points in sequence, check what is done in project structure and do the next opened task
+- Review and adjust the generated code
+- Test the implementation
+- Commit working code before moving to next prompt
+- Document any issues or modifications needed
+

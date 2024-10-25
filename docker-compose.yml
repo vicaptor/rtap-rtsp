@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  rtsp-server:
+    build:
+      context: ./services/rtsp-server
+      dockerfile: Dockerfile
+    ports:
+      - "8554:8554"
+      - "8888:8888"
+    volumes:
+      - rtsp_data:/data
+    networks:
+      - rtap-network
+
+  annotation-service:
+    build:
+      context: ./services/annotation-service
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - rtap-network
+
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+      - "8443:443"
+    depends_on:
+      - rtsp-server
+      - annotation-service
+    networks:
+      - rtap-network
+
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - rtap-network
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis_data:/data
+    networks:
+      - rtap-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - rtap-network
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ./monitoring/grafana:/etc/grafana
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - rtap-network
+
+networks:
+  rtap-network:
+    driver: bridge
+
+volumes:
+  rtsp_data:
+  mongodb_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
