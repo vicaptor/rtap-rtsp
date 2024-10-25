@@ -1,24 +1,4 @@
-## [0.1.0] - 2024-10-25
-
-### Added
-- 
-
-### Changed
-- 
-
-### Deprecated
-- 
-
-### Removed
-- 
-
-### Fixed
-- 
-
-### Security
-- 
-
-## [0.1.0] - 2024-10-25
+## [0.2.0] - 2024-10-25
 
 ### Added
 - 
@@ -44,7 +24,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - 2024-10-25
+## [0.2.0] - 2024-10-25
+
+### Added
+- Docker configuration for all services
+- MediaMTX RTSP server setup
+- Node.js annotation service configuration
+- Nginx API gateway setup
+- MongoDB and Redis configurations
+- Prometheus and Grafana monitoring setup
+- Health checks for services
+- SSL/TLS support in API gateway
+
+### Changed
+- Updated docker-compose.yml with all services
+- Enhanced service configurations with environment variables
+- Improved networking setup between services
+
+### Security
+- Added SSL/TLS configuration for API gateway
+- Basic authentication for RTSP streams
+- Secure passwords for MongoDB and Redis
+
+## [0.1.0] - 2024-01-09
 
 ### Added
 - Initial project structure setup
@@ -56,18 +58,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Development environment configuration
 - Basic documentation
 - Git configuration and ignore rules
-
-### Changed
-- N/A
-
-### Deprecated
-- N/A
-
-### Removed
-- N/A
-
-### Fixed
-- N/A
-
-### Security
-- N/A
