@@ -1,7 +1,7 @@
 import { MediaPlayer } from './player';
 import { AnnotationManager } from './annotation';
 import { WebSocketManager } from './websocket';
-import { RTAPConfig, StreamOptions } from './types';
+import { RTAPConfig, StreamOptions, Annotation } from './types';
 import { RTAPError } from './errors';
 
 export class RTAPClient {
@@ -15,7 +15,7 @@ export class RTAPClient {
     this.wsManager = new WebSocketManager(config.wsConfig);
 
     // Connect annotation manager with WebSocket
-    this.wsManager.onAnnotation((annotation) => {
+    this.wsManager.onAnnotation((annotation: Annotation) => {
       this.annotationManager.handleRemoteAnnotation(annotation);
     });
   }
@@ -30,7 +30,7 @@ export class RTAPClient {
       this.annotationManager.attachToPlayer(this.player);
       await this.wsManager.connect();
     } catch (error) {
-      throw new RTAPError('Failed to initialize client', { cause: error });
+      throw new RTAPError('Failed to initialize client', { cause: error instanceof Error ? error : undefined });
     }
   }
 
@@ -44,7 +44,7 @@ export class RTAPClient {
       await this.player.loadStream(streamUrl, options);
       await this.wsManager.subscribeToStream(streamUrl);
     } catch (error) {
-      throw new RTAPError('Failed to load stream', { cause: error });
+      throw new RTAPError('Failed to load stream', { cause: error instanceof Error ? error : undefined });
     }
   }
 
@@ -57,7 +57,7 @@ export class RTAPClient {
       await this.wsManager.disconnect();
       this.annotationManager.clear();
     } catch (error) {
-      throw new RTAPError('Failed to stop client', { cause: error });
+      throw new RTAPError('Failed to stop client', { cause: error instanceof Error ? error : undefined });
     }
   }
 

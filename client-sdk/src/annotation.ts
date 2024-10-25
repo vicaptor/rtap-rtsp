@@ -30,8 +30,8 @@ export class AnnotationManager {
     this.canvas.style.position = 'absolute';
     this.canvas.style.top = '0';
     this.canvas.style.left = '0';
-    this.canvas.width = videoElement.clientWidth;
-    this.canvas.height = videoElement.clientHeight;
+    this.canvas.width = videoElement.clientWidth || 640; // Default width if not set
+    this.canvas.height = videoElement.clientHeight || 480; // Default height if not set
 
     const context = this.canvas.getContext('2d');
     if (!context) {
@@ -40,7 +40,11 @@ export class AnnotationManager {
     this.context = context;
 
     // Add canvas to video container
-    videoElement.parentElement?.appendChild(this.canvas);
+    const container = videoElement.parentElement;
+    if (!container) {
+      throw new RTAPError('Video element must be in a container');
+    }
+    container.appendChild(this.canvas);
 
     // Handle resize
     window.addEventListener('resize', this.handleResize.bind(this));
@@ -78,7 +82,9 @@ export class AnnotationManager {
    */
   public clear(): void {
     this.annotations.clear();
-    this.context?.clearRect(0, 0, this.canvas?.width || 0, this.canvas?.height || 0);
+    if (this.context && this.canvas) {
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
   }
 
   /**
@@ -91,8 +97,10 @@ export class AnnotationManager {
   private handleResize(): void {
     if (this.canvas && this.player?.getVideoElement()) {
       const video = this.player.getVideoElement();
-      this.canvas.width = video.clientWidth;
-      this.canvas.height = video.clientHeight;
+      if (video) {
+        this.canvas.width = video.clientWidth || 640;
+        this.canvas.height = video.clientHeight || 480;
+      }
     }
   }
 
