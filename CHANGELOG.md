@@ -1,4 +1,4 @@
-## [0.2.1] - 2024-10-25
+## [0.3.0] - 2024-10-25
 
 ### Added
 - 
@@ -24,7 +24,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.1] - 2024-10-25
+## [0.3.0] - 2024-10-25
+
+### Added
+- RTSP server Go implementation
+- API endpoints for stream management
+- WebSocket support for real-time updates
+- Stream monitoring system
+- Health check endpoint
+- Stream statistics tracking
+
+### Changed
+- Enhanced RTSP server with Go wrapper
+- Improved stream management capabilities
+- Added real-time monitoring
+
+## [0.2.1] - 2024-01-09
 
 ### Added
 - ISSUES.md with prerequisites and known issues
