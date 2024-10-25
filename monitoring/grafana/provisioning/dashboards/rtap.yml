@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: 'RTAP Dashboards'
+    orgId: 1
+    folder: 'RTAP'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/dashboards
