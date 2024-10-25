@@ -1,19 +1,85 @@
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
+  scrape_timeout: 10s
+
+  external_labels:
+    monitor: 'rtap-rtsp-monitor'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - "alert.rules.yml"
 
 scrape_configs:
+  # RTSP Server metrics
   - job_name: 'rtsp_server'
+    metrics_path: '/metrics'
     static_configs:
-      - targets: ['rtsp-server:8554']
+      - targets: ['rtsp-server:9997']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+)(:[0-9]+)?'
+        replacement: '${1}'
 
+  # Annotation Service metrics
   - job_name: 'annotation_service'
+    metrics_path: '/metrics'
     static_configs:
       - targets: ['annotation-service:3000']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+)(:[0-9]+)?'
+        replacement: '${1}'
 
-  - job_name: 'nginx'
+  # API Gateway metrics
+  - job_name: 'api_gateway'
+    metrics_path: '/metrics'
     static_configs:
       - targets: ['api-gateway:80']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+)(:[0-9]+)?'
+        replacement: '${1}'
 
-rule_files:
-  - 'alert.rules.yml'
+  # MongoDB metrics
+  - job_name: 'mongodb'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['mongodb-exporter:9216']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+)(:[0-9]+)?'
+        replacement: '${1}'
+
+  # Redis metrics
+  - job_name: 'redis'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+)(:[0-9]+)?'
+        replacement: '${1}'
+
+  # Node metrics
+  - job_name: 'node'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+)(:[0-9]+)?'
+        replacement: '${1}'

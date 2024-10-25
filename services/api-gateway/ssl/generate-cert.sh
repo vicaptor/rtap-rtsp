@@ -12,3 +12,6 @@ openssl req -x509 \
 
 # Set proper permissions
 chmod 600 server.key
+chmod 644 server.crt
+
+echo "SSL certificate and key generated successfully"
