@@ -1,4 +1,4 @@
-## [0.3.0] - 2024-10-25
+## [0.3.1] - 2024-10-25
 
 ### Added
 - 
@@ -24,7 +24,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0] - 2024-10-25
+## [0.3.1] - 2024-10-25
+
+### Added
+- MediaMTX client package for API integration
+- Complete RTSP stream management implementation
+- Real-time stream monitoring with WebSocket broadcasts
+- Improved error handling and status reporting
+- Stream statistics collection
+
+### Changed
+- Enhanced RTSP server implementation with MediaMTX integration
+- Improved WebSocket handling with client tracking
+- Better stream status monitoring
+
+### Fixed
+- Implemented all TODO items in main.go
+- Added proper error handling for API calls
+- Improved WebSocket connection management
+
+## [0.3.0] - 2024-01-09
 
 ### Added
 - RTSP server Go implementation
