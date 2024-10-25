@@ -1,4 +1,4 @@
-## [0.4.3] - 2024-10-25
+## [0.5.0] - 2024-10-25
 
 ### Added
 - 
@@ -24,7 +24,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.3] - Error: date.txt not found. Please run the script that generates it first.
+## [0.5.0] - 2024-10-25
+
+### Added
+- Complete Nginx API gateway configuration
+- SSL/TLS setup with certificate generation
+- Rate limiting for different endpoints
+- Load balancing configuration
+- Advanced CORS setup
+- WebSocket proxy support
+- Security headers
+- Health check endpoints
+
+### Changed
+- Enhanced proxy settings for all services
+- Improved error handling
+- Better security configuration
+
+### Security
+- SSL/TLS configuration
+- Rate limiting rules
+- Security headers
+- CORS restrictions
+
+## [0.4.3] - 2024-01-09
 
 ### Added
 - Complete Dockerfile for annotation service
