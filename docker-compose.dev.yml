@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  rtsp-server:
+    build:
+      context: ./services/rtsp-server
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/rtsp-server:/app
+    environment:
+      - GO111MODULE=on
+      - GOFLAGS=-mod=vendor
+    command: go run main.go
+
+  annotation-service:
+    build:
+      context: ./services/annotation-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/annotation-service:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+
+  api-gateway:
+    volumes:
+      - ./services/api-gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./services/api-gateway/ssl:/etc/nginx/ssl:ro
+
+  prometheus:
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus:ro
+
+  grafana:
+    volumes:
+      - ./monitoring/grafana:/etc/grafana:ro
+
+volumes:
+  node_modules:

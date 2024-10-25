@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Exit on error
+set -e
+
+echo "Running pre-commit checks..."
+
+# Run linters
+echo "Running linters..."
+
+# Go files
+if [ -d "services/rtsp-server" ]; then
+    cd services/rtsp-server
+    go fmt ./...
+    go vet ./...
+    cd ../..
+fi
+
+# TypeScript files
+if [ -d "services/annotation-service" ]; then
+    cd services/annotation-service
+    npm run lint
+    cd ../..
+fi
+
+if [ -d "client-sdk" ]; then
+    cd client-sdk
+    npm run lint
+    cd ..
+fi
+
+# Run tests
+echo "Running tests..."
+make test-unit
+
+echo "Pre-commit checks passed!"

@@ -60,7 +60,7 @@ Real-Time Annotation Platform with RTSP Streaming capabilities.
 
 3. Start the development environment:
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 4. Access the services:
@@ -89,7 +89,7 @@ npm run dev
 
 # API Gateway
 cd services/api-gateway
-docker-compose up nginx
+docker compose up nginx
 ```
 
 ### Running Tests
@@ -115,7 +115,7 @@ make test-performance
 
 2. Deploy using Docker Compose:
    ```bash
-   docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
    ```
 
 ## Monitoring
