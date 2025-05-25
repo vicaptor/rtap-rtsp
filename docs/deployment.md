@@ -72,12 +72,12 @@ export DEPLOY_ENV=production
 
 1. RTSP Server:
 ```bash
-docker-compose up -d --scale rtsp-server=3
+docker compose up -d --scale rtsp-server=3
 ```
 
 2. Annotation Service:
 ```bash
-docker-compose up -d --scale annotation-service=3
+docker compose up -d --scale annotation-service=3
 ```
 
 ### Resource Limits
@@ -143,7 +143,7 @@ git checkout v1.0.0
 
 1. Check service health:
 ```bash
-docker-compose ps
+docker compose ps
 ./scripts/wait-for-services.sh
 ```
 

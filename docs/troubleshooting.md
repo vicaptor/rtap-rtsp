@@ -8,7 +8,7 @@
 
 1. Check logs:
 ```bash
-docker-compose logs rtsp-server
+docker compose logs rtsp-server
 ```
 
 2. Verify ports:
@@ -25,17 +25,17 @@ cat services/rtsp-server/mediamtx.yml
 
 1. Check MongoDB connection:
 ```bash
-docker-compose exec annotation-service npm run check-db
+docker compose exec annotation-service npm run check-db
 ```
 
 2. Verify Redis:
 ```bash
-docker-compose exec redis redis-cli ping
+docker compose exec redis redis-cli ping
 ```
 
 3. Check logs:
 ```bash
-docker-compose logs annotation-service
+docker compose logs annotation-service
 ```
 
 ### Network Issues
@@ -44,7 +44,7 @@ docker-compose logs annotation-service
 
 1. Check Nginx status:
 ```bash
-docker-compose exec api-gateway nginx -t
+docker compose exec api-gateway nginx -t
 ```
 
 2. Verify SSL certificates:
@@ -54,7 +54,7 @@ openssl x509 -in services/api-gateway/ssl/server.crt -text
 
 3. Check configurations:
 ```bash
-docker-compose exec api-gateway cat /etc/nginx/nginx.conf
+docker compose exec api-gateway cat /etc/nginx/nginx.conf
 ```
 
 #### WebSocket Connection Failed
@@ -106,13 +106,13 @@ node --inspect annotation-service/dist/index.js
 
 1. Check disk usage:
 ```bash
-docker-compose exec mongodb mongo --eval "db.stats()"
+docker compose exec mongodb mongo --eval "db.stats()"
 ```
 
 2. Clean old data:
 ```bash
 # Create cleanup script
-docker-compose exec mongodb mongo cleanup.js
+docker compose exec mongodb mongo cleanup.js
 ```
 
 #### Stream Storage Full
@@ -154,7 +154,7 @@ curl localhost:9090/api/v1/query?query=http_request_duration_seconds
 
 2. Monitor network:
 ```bash
-docker-compose exec api-gateway nginx -v
+docker compose exec api-gateway nginx -v
 ```
 
 ## Recovery Procedures
@@ -163,7 +163,7 @@ docker-compose exec api-gateway nginx -v
 
 1. Restart service:
 ```bash
-docker-compose restart <service>
+docker compose restart <service>
 ```
 
 2. Verify health:
@@ -187,8 +187,8 @@ docker-compose restart <service>
 
 1. Full system restart:
 ```bash
-docker-compose down
-docker-compose up -d
+docker compose down
+docker compose up -d
 ```
 
 2. Verify system:
