@@ -68,3 +68,7 @@ temp/
 prometheus_data/
 grafana_data/
 /services/annotation-service/package-lock.json
+
+# Media directories
+images/
+video/
